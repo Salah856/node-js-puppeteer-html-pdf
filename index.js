@@ -14,7 +14,10 @@ app.post('/create-pdf', async (req, res) => {
         const page = await browser.newPage();
         await page.setContent(req.body.html);
 
-        const pdfBuffer = await page.pdf();
+        const pdfBuffer = await page.pdf({
+            format: 'A3', 
+            landscape: true, 
+        });
         await browser.close();
 
         res.set('Content-Type', 'application/pdf');
