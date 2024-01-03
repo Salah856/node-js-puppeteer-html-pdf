@@ -2,7 +2,13 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 
 const app = express();
-app.use(express.json());
+
+app.use(express.json({limit: '10mb'}));
+app.use(
+    express.urlencoded(
+        {limit: '10mb', extended: true}
+    )
+);
 
 app.get('/', async(req, res) => {
     res.send('hello world from tuna ops sheet!');
@@ -10,7 +16,11 @@ app.get('/', async(req, res) => {
 
 app.post('/create-pdf', async (req, res) => {
     try {
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({
+            headless: "new",
+           executablePath: "/usr/bin/chromium-browser",
+           args: ["--no-sandbox"],
+        });
         const page = await browser.newPage();
         await page.setContent(req.body.html);
 
@@ -32,4 +42,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
 
